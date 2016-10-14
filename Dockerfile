@@ -1,6 +1,6 @@
 FROM alpine:3.4
 
-RUN apk add --update nginx s6 php5-fpm php5-cli php5-curl php5-gd php5-json php5-dom php5-pcntl php5-posix \
+RUN apk add --update nginx s6 php5-fpm php5-cli php5-curl php5-gd php5-json php5-dom php5-pcntl php5-posix zip \
   php5-pgsql php5-mysql php5-mysqli php5-mcrypt php5-pdo php5-pdo_pgsql php5-pdo_mysql ca-certificates && \
   rm -rf /var/cache/apk/*
 
@@ -10,6 +10,7 @@ ADD ttrss.nginx.conf /etc/nginx/nginx.conf
 # Download plugins
 ADD https://github.com/dasmurphy/tinytinyrss-fever-plugin/archive/master.tar.gz /var/www/plugins/
 ADD https://github.com/levito/tt-rss-feedly-theme/archive/master.tar.gz /var/www/themes/
+ADD https://github.com/xppppp/ttrss-wallabag-plugin/archive/master.zip /var/www/plugins/
 
 # install ttrss and patch configuration
 WORKDIR /var/www
@@ -32,6 +33,8 @@ ENV SELF_URL_PATH http://localhost
 ENV DB_NAME ttrss
 ENV DB_USER ttrss
 ENV DB_PASS ttrss
+ENV DB_HOST 172.17.0.1
+ENV DB_PORT 3306
 
 # always re-configure database with current ENV when RUNning container, then monitor all services
 ADD configure-db.php /configure-db.php
